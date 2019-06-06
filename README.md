@@ -35,14 +35,14 @@ class Demo extends Component {
 ## Options
 
 
-You can set the options to `drag-drop-sort`.
-|Name|Type|Default|Description|
+* You can set the options to `drag-drop-sort`.
+| Name | Type | Default | Description |
 |:--:|:--:|:-----:|:----------|
 |**`data`**|`{Array}`|`[]`|the Data used to render lists for sort.|
 |**`callback`**|`{Array}`|`[]`|Returns sorted data.|
 |**`dragTag`**|`{String}`|`undefined`|the tagName of the specified drag child element.|
 
-Here's an example webpack config illustrating how to use these options
+* Here's an example webpack config illustrating how to use these options
 ```
 <DragDropSort data={data} callback={getReturnData} dragTag="button">
   {items}
