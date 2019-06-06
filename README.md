@@ -36,10 +36,7 @@ class Demo extends Component {
 
 
 * You can set the options to `drag-drop-sort`.
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
+
 
 | Name | Type | Default | Description |
 |:--:|:--:|:-----:|:----------|
