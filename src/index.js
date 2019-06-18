@@ -24,14 +24,9 @@ export class DragDropSort extends Component {
     this.BindEvent();
   }
 
-  componentDidUpdate(prevProps) {
-    if(JSON.stringify(this.props.data) !== JSON.stringify(this.state.data)) {
-      this.setState({
-        data: this.props.data
-      });
-      this.callback(this.state.data);
-    }
+  componentDidUpdate() {
     this.AddAttr(this._parent);
+    this.callback(this.state.data);
   }
 
   $(dom, selector, isAll) {
