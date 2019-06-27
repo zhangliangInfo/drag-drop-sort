@@ -19,7 +19,7 @@ export class DragDropSort extends Component {
     this.targetIdx = null;
     this.enterObj = Object.create(null);
     this.targetObj = Object.create(null);
-    this.childTagName = this._parent.firstElementChild.tagName.toLowerCase();
+    this.childTagName = this._parent.firstElementChild && this._parent.firstElementChild.tagName.toLowerCase();
     this.AddAttr(this._parent);
     this.BindEvent();
   }
@@ -62,20 +62,19 @@ export class DragDropSort extends Component {
 
     that._parent.addEventListener('dragenter', e => {
       e.preventDefault();
-      that.enterObj = e.target;
-      let _enterObj = that.FindParent(that._parent, e.target);
+      that.enterObj = that.FindParent(that._parent, e.target);
 
       // the enter Object must is the children of _parent.
-      if(_enterObj != undefined) {
+      if(that.enterObj != undefined) {
         that.$(that._parent, that.childTagName, true).forEach((dom, idx) => {
-          if(dom == _enterObj) {
+          if(dom == that.enterObj) {
             that.enterIdx = idx;
           };
         });
         if(that.targetIdx < that.enterIdx) {
-          _enterObj.style.borderRight = '2px dashed #1890ff';
+          that.enterObj.style.borderRight = '2px dashed #1890ff';
         } else if(that.targetIdx > that.enterIdx) {
-          _enterObj.style.borderLeft = '2px dashed #1890ff';
+          that.enterObj.style.borderLeft = '2px dashed #1890ff';
         }
       }
     });
@@ -104,13 +103,11 @@ export class DragDropSort extends Component {
       if(tar != undefined && that.enterObj != undefined && tar.parentNode == that._parent) {
         tar.removeAttribute('style');
         if(that.targetIdx < that.enterIdx) {
-          if(tar.nextSibling == null) {
-            that._parent.appendChild(that.targetObj);
-          } else {
-            that._parent.insertBefore(that.targetObj, tar.nextSibling);
-          }
+          that.targetObj.remove();
+          that.enterObj.after(that.targetObj)
         } else if(that.targetIdx > that.enterIdx) {
-          that._parent.insertBefore(that.targetObj, tar);
+          that.targetObj.remove();
+          that.enterObj.before(that.targetObj)
         }
         // process sorted data.
         let rstData = [];
