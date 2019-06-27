@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-export class DragDropSort extends Component {
+export default class DragDropSort extends Component {
   constructor(props) {
     super(props);
     this.callback = this.props.callback;
@@ -24,8 +24,13 @@ export class DragDropSort extends Component {
     this.BindEvent();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     this.AddAttr(this._parent);
+    if(JSON.stringify(this.props.data) != JSON.stringify(prevProps.data)) {
+      this.setState({
+        data: this.props.data
+      });
+    }
     this.callback(this.state.data);
   }
 
