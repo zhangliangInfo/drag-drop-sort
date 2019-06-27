@@ -1,6 +1,6 @@
 {
   "name": "drag-drop-sort",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Dom element drag-and-drop sorting function, and return the sorted elements",
   "main": "lib/index.js",
   "files": ["lib"],
