@@ -5,10 +5,6 @@ export default class DragDropSort extends Component {
     super(props);
     this.callback = this.props.callback;
     this.dragTag  = this.props.dragTag && this.props.dragTag.toLowerCase();
-    // set the state.
-    this.state = {
-      data: this.props.data
-    };
   }
 
   componentDidMount() {
@@ -26,12 +22,6 @@ export default class DragDropSort extends Component {
 
   componentDidUpdate(prevProps) {
     this.AddAttr(this._parent);
-    if(JSON.stringify(this.props.data) != JSON.stringify(prevProps.data)) {
-      this.setState({
-        data: this.props.data
-      });
-    }
-    this.callback(this.state.data);
   }
 
   $(dom, selector, isAll) {
@@ -121,9 +111,7 @@ export default class DragDropSort extends Component {
           let label = node.textContent;
           rstData = rstData.concat(this.props.data.filter(item => item.label === label));
         });
-        that.setState({
-          data: rstData
-        });
+        that.callback(rstData);
       }
     });
   }
