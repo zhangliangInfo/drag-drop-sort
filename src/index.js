@@ -41,18 +41,26 @@ export default class DragDropSort extends Component {
 
     // when the drap start, emit the event.
     that._parent.addEventListener('dragstart', e => {
-      that.targetObj = that.FindParent(that._parent, e.target);
+      let target = that.FindParent(that._parent, e.target);
+      that.targetObj = target;
+      // compatible the firefox browser.
+      if(/Firefox/.test(navigator.userAgent)) {
+        e.dataTransfer.setData('Text', target);
+      }
       that.$(that._parent, that.childTagName, true).forEach((dom, idx) => {
-        if(dom == that.targetObj) {
+        if(dom == target) {
           that.targetIdx = idx;
         }
       })
-      e.target.style.opacity = .5;
+      target.style.opacity = .5;
     });
 
     // when the drap end, remove the style.
     that._parent.addEventListener('dragend', e => {
       e.target.style.opacity = '';
+      that._parent.childNodes.forEach(node => {
+        node.removeAttribute('style');
+      });
     });
 
     that._parent.addEventListener('dragenter', e => {
@@ -65,6 +73,10 @@ export default class DragDropSort extends Component {
           if(dom == that.enterObj) {
             that.enterIdx = idx;
           };
+        });
+
+        that._parent.childNodes.forEach(node => {
+          node.removeAttribute('style');
         });
         if(that.targetIdx < that.enterIdx) {
           that.enterObj.style.borderRight = '2px dashed #1890ff';
@@ -84,34 +96,39 @@ export default class DragDropSort extends Component {
   
     that._parent.addEventListener('dragleave', e => {
       e.preventDefault();
-      let tar = that.FindParent(that._parent, e.target);
-      let _tar = that.FindParent(that._parent, that.enterObj);
-      if(tar.getAttribute('style') && e.target == _tar) {
-        tar.removeAttribute('style');
-      }
     });
   
     that._parent.addEventListener('drop', e => {
       e.preventDefault();
-      let tar = that.FindParent(that._parent, e.target);
+      e.stopPropagation();
+      let {_parent, targetObj, targetIdx, enterObj, enterIdx, FindParent, callback} = that;
+      let tar = FindParent(_parent, e.target);
 
-      if(tar != undefined && that.enterObj != undefined && tar.parentNode == that._parent) {
-        tar.removeAttribute('style');
-        if(that.targetIdx < that.enterIdx) {
-          that.targetObj.remove();
-          that.enterObj.after(that.targetObj)
-        } else if(that.targetIdx > that.enterIdx) {
-          that.targetObj.remove();
-          that.enterObj.before(that.targetObj)
+      if(tar != undefined && enterObj != undefined && tar.parentNode == _parent) {
+        // compatible the Edge browser.
+        if(targetIdx < enterIdx) {
+          if(/Edge/.test(navigator.userAgent)) {
+            _parent.insertBefore(_parent.childNodes[targetIdx], _parent.childNodes[enterIdx + 1]);
+          } else {
+            targetObj.remove();
+            enterObj.after(targetObj);
+          }
+        } else if(targetIdx > enterIdx) {
+          if(/Edge/.test(navigator.userAgent)) {
+            _parent.insertBefore(targetObj, enterObj);
+          } else {
+            targetObj.remove();
+            enterObj.before(targetObj);
+          }
         }
         // process sorted data.
         let rstData = [];
-        that._parent.childNodes.forEach(node => {
+        _parent.childNodes.forEach(node => {
           node.removeAttribute('style');
           let label = node.textContent;
           rstData = rstData.concat(this.props.data.filter(item => item.label === label));
         });
-        that.callback(rstData);
+        callback(rstData);
       }
     });
   }
@@ -130,6 +147,7 @@ export default class DragDropSort extends Component {
     }
     while(target.parentNode != targetPar) {
       target = target.parentNode;
+      if(target == null || target == undefined) break;
     }
     return target;
   }
